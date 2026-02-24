@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -85,18 +87,23 @@ export default function AccountingProviderConnect({ provider }: AccountingProvid
                 </Button>
               </div>
             ) : (
-              <Button size="sm" onClick={handleConnect} disabled={isConnecting}>
-                {isConnecting ? (
-                  <>
-                    <RefreshCw className="mr-1 h-4 w-4 animate-spin"/>
-                    Connecting...
-                  </>
-                ) : (
-                  <>
-                    <Link2 className="mr-1 h-4 w-4"/>
-                    Connect to {providerCapitalized}
-                  </>
-                )}
+              <Button>
+                <Link
+                  href={`/api/${provider}/auth`}
+                  aria-disabled={isConnecting} className="inline-flex items-center gap-1"
+                >
+                  {isConnecting ? (
+                    <>
+                      <RefreshCw className="mr-1 h-4 w-4 animate-spin"/>
+                      Connecting...
+                    </>
+                  ) : (
+                    <>
+                      <Link2 className="mr-1 h-4 w-4"/>
+                      Connect to {providerCapitalized}
+                    </>
+                  )}
+                </Link>
               </Button>
             )
           ) : (

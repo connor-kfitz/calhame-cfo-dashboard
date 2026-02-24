@@ -5,3 +5,5 @@ export const dashboardSideNavItems = [
   { label: "Connect", href: "/dashboard/connect", icon: Link2 },
   { label: "Settings", href: "/dashboard/settings", icon: Settings }
 ];
+
+export const intuitAuthScope = "com.intuit.quickbooks.accounting";
