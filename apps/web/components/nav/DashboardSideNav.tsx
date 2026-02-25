@@ -27,7 +27,7 @@ export default function DashboardSideNav() {
 
       <SidebarContent className="flex flex-1 flex-col gap-1 px-3 pt-2">
         <SidebarMenu>
-          {dashboardSideNavItems.map((item) => {
+          {dashboardSideNavItems.filter((item) => !item.disabled).map((item) => {
             const isActive = pathname === item.href;
             const Icon = item.icon;
 
