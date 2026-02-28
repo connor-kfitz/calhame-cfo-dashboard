@@ -9,7 +9,12 @@
       "env": [
         "CLERK_SECRET_KEY",
         "DATABASE_URL",
-        "REDIS_URL"
+        "REDIS_URL",
+        "QUICKBOOKS_CLIENT_ID",
+        "QUICKBOOKS_CLIENT_SECRET",
+        "QUICKBOOKS_REDIRECT_URI",
+        "QUICKBOOKS_BASE_URL",
+        "TOKEN_ENCRYPTION_KEY"
       ]
     },
     "lint": {

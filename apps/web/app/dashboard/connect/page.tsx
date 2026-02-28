@@ -4,14 +4,13 @@ import AccountingProvidersContainer from "@/components/dashboard/connect/Account
 import { getCompaniesByUser } from "@/lib/queries/companies/get-companies-by-user";
 import { auth } from "@clerk/nextjs/server";
 import { getUserByClerkId } from "@/lib/queries/users/get-user-by-clerk-id";
+import { redirect } from "next/navigation";
 
 export default async function DashboardConnectPage() {
   
   const { userId: clerkId } = await auth();
 
-  if (!clerkId) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  if (!clerkId) redirect("/sign-in");
 
   const userResult = await getUserByClerkId(clerkId);
 
