@@ -6,7 +6,7 @@ export async function upsertRevenue(
   accountId: string,
   accountName: string,
   amount: number,
-  date: string | undefined,
+  date: string,
   client?: PoolClient
 ) {
   const database = client ?? pool;

@@ -1,20 +1,15 @@
 import { Entity } from "@repo/shared";
-import { getRequiredEnv, isExpiringSoon } from "../lib/helpers";
-import { getAccountingConnectionByCompanyId } from "../lib/queries/accounting_connections/get-accounting-connection-by-company-id";
-import { markAccountingConnectionSynced } from "../lib/queries/accounting_connections/mark-accounting-connection-synced";
-import { updateAccountingConnectionById } from "../lib/queries/accounting_connections/update-accounting-connection-by-id";
-import { upsertProviderSyncStateLastSynced } from "../lib/queries/provider_sync_state/upsert-provider-sync-state-last-synced";
-import { upsertRevenue } from "../lib/queries/revenue/upsert-revenue";
-import { decryptTokenFromStorage } from "../lib/token-crypto";
-import { extractRevenueAccounts, fetchProfitAndLoss } from "./quickbooks/quickbooks-revenue.service";
+import { getRequiredEnv, isExpiringSoon, quickbooksRequest } from "../../lib/helpers";
+import { getAccountingConnectionByCompanyId } from "../../lib/queries/accounting_connections/get-accounting-connection-by-company-id";
+import { markAccountingConnectionSynced } from "../../lib/queries/accounting_connections/mark-accounting-connection-synced";
+import { updateAccountingConnectionById } from "../../lib/queries/accounting_connections/update-accounting-connection-by-id";
+import { decryptTokenFromStorage } from "../../lib/token-crypto";
+import { syncRevenue } from "./quickbooks-revenue.service";
+import { syncCogs } from "./quickbooks-cogs.service";
+import { syncExpenses } from "./quickbooks-expenses.service";
 
 export async function syncQuickBooksCompany(companyId: string, entities: Entity[]) {
   console.log(`Starting QuickBooks sync for company ${companyId}, entities ${entities}...`);
-
-  // TODO:
-  // 1. Call QuickBooks API
-  // 2. Normalize data
-  // 3. Write to Postgres
 
   const connectionResult = await getAccountingConnectionByCompanyId(companyId);
   const row = connectionResult.rows[0];
@@ -28,30 +23,32 @@ export async function syncQuickBooksCompany(companyId: string, entities: Entity[
   await companyInfoRes.json();
 
   const startDate = "2024-01-01";
-  const endDate = new Date().toISOString().split("T")[0];
-  
-  if (entities.includes("revenue")) {
-    const pnl = await fetchProfitAndLoss(
-      row.realmId,
-      currentAccessToken,
-      startDate,
-      endDate
-    );
+  const endDate = new Date().toISOString().split("T")[0] as string;
 
-    const revenueAccounts = extractRevenueAccounts(pnl);
+  const pnl = await fetchProfitAndLoss(
+    row.realmId,
+    currentAccessToken,
+    startDate,
+    endDate
+  );
 
-    for (const account of revenueAccounts) {
-      await upsertRevenue(
-        companyId,
-        account.accountId,
-        account.accountName,
-        account.amount,
-        endDate
-      );
+  for (const entity of entities) {
+    switch (entity) {
+      case "revenue":
+        await syncRevenue(companyId, row, endDate, pnl);
+        break;
+      case "cogs":
+        await syncCogs(companyId, row, endDate, pnl);
+        break;
+      case "expenses":
+        await syncExpenses(companyId, row, endDate, pnl);
+        break;
+      default:
+        console.error(`Unknown entity type: ${entity}`);
+        break;
     }
-    await upsertProviderSyncStateLastSynced(row.connectionId, "revenue");
   }
-
+  
   await markAccountingConnectionSynced(row.connectionId);
 
   console.log(`Finished QuickBooks sync for ${companyId}`);
@@ -192,4 +189,15 @@ async function fetchQuickBooksCompanyInfo(realmId: string, accessToken: string) 
   });
 
   return res;
+}
+
+async function fetchProfitAndLoss(
+  realmId: string,
+  accessToken: string,
+  startDate: string,
+  endDate: string
+) {
+  console.log(startDate, endDate);
+  const query = `reports/ProfitAndLoss?start_date=${startDate}&end_date=${endDate}&accounting_method=Accrual`;
+  return quickbooksRequest(realmId, accessToken, query);
 }

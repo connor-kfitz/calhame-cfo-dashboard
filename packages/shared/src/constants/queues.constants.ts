@@ -5,4 +5,4 @@ export const ACCOUNTING_QUEUE: Queue = 'accounting-sync';
 
 export const SYNC_COMPANY_JOB: AccountingQueueJob = 'sync-company';
 
-export const ENTITIES: Entity[] = ["revenue"];
+export const ENTITIES: Entity[] = ["revenue", "cogs", "expenses"];

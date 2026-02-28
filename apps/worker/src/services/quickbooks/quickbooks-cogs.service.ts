@@ -1,36 +1,42 @@
+import { upsertCogs } from "../../lib/queries/cogs/upsert-cogs";
 import { upsertProviderSyncStateLastSynced } from "../../lib/queries/provider_sync_state/upsert-provider-sync-state-last-synced";
-import { upsertRevenue } from "../../lib/queries/revenue/upsert-revenue";
 
-// Fix any types and clean this file up
+// Todo: Fix any types and clean this file up
 
-export async function syncRevenue(companyId: string, row: any, endDate: string, pnl: any) {
-  
-  const revenueAccounts = extractRevenueAccounts(pnl);
-  
-  for (const account of revenueAccounts) {
-    await upsertRevenue(
+export async function syncCogs(companyId: string, row: any, endDate: string, pnl: any) {
+
+  const cogsAccounts = extractCogsAccounts(pnl);
+
+  for (const account of cogsAccounts) {
+    await upsertCogs(
       companyId,
-      account.accountId,
       account.accountName,
       account.amount,
       endDate
     );
   }
 
-  await upsertProviderSyncStateLastSynced(row.connectionId, "revenue");
+  await upsertProviderSyncStateLastSynced(row.connectionId, "cogs");
 }
 
-function extractRevenueAccounts(pnl: any) {
+interface PnlAccount {
+  accountId: string;
+  accountName: string;
+  amount: number;
+}
+
+// Todo: Make this more generic and reuse it in revenue and expenses
+export function extractCogsAccounts(pnl: any): PnlAccount[] {
   const accounts: {
     accountId: string;
     accountName: string;
     amount: number;
-  } [] = [];
+  }[] = [];
 
   const sections = pnl?.Rows?.Row ?? [];
 
   for (const section of sections) {
-    if (section.group !== "Income") continue;
+    if (section.group !== "COGS") continue;
 
     const rows = section?.Rows?.Row ?? [];
 
