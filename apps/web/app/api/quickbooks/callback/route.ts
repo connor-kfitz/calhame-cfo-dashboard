@@ -6,6 +6,7 @@ import { storeCompany } from "@/lib/queries/quickbooks/store-company";
 import { getCompanyName } from "@/lib/queries/quickbooks/get-company-name";
 import { storeAccountingConnection } from "@/lib/queries/store-accounting-connection";
 import { storeCompanyMembership } from "@/lib/queries/store-company-membership";
+import { getUserByClerkId } from "@/lib/queries/users/get-user-by-clerk-id";
 
 const clientId = process.env.QUICKBOOKS_CLIENT_ID!;
 const clientSecret = process.env.QUICKBOOKS_CLIENT_SECRET!;
@@ -15,7 +16,7 @@ export async function GET(req: NextRequest) {
 
   const { searchParams } = new URL(req.url);
 
-  const { userId: clerkUserId } = await auth();
+  const { userId: clerkId } = await auth();
 
   const cookieStore = await cookies()
 
@@ -37,7 +38,7 @@ export async function GET(req: NextRequest) {
     return Response.json({ error: { message: "Missing realmId" } }, { status: 400 });
   }
   
-  if (!clerkUserId) {
+  if (!clerkId) {
     return Response.json({ error: { message: "Not authenticated" } }, { status: 401 });
   }
 
@@ -88,8 +89,12 @@ export async function GET(req: NextRequest) {
     try {
       await client.query("BEGIN");
 
+      const userResult = await getUserByClerkId(clerkId, client);
+      const userId = userResult[0].id;
+
       const company = await storeCompany(realmId, companyName, "quickbooks", client);
-      await storeCompanyMembership(clerkUserId, company.id, "member", client);
+      await storeCompanyMembership(userId, company.id, "member", client);
+
       await storeAccountingConnection(
         company.id, data.access_token, data.refresh_token,
         accessTokenExpiresAt, refreshTokenExpiresAt, client

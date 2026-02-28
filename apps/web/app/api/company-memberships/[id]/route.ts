@@ -1,11 +1,12 @@
 import { deleteCompanyMembershipsById } from "@/lib/queries/company-memberships/delete-company-memberships-by-id";
+import { getUserByClerkId } from "@/lib/queries/users/get-user-by-clerk-id";
 import { auth } from "@clerk/nextjs/server";
 
 export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
 	try {
-    const { userId } = await auth();
+    const { userId: clerkUserId } = await auth();
 
-    if (!userId) {
+    if (!clerkUserId) {
       return Response.json(
         { error: { message: "Unauthorized" } },
         { status: 401 }
@@ -21,7 +22,10 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
       );
 		}
 
-    const deleted = await deleteCompanyMembershipsById(companyMembershipId);
+    const userResult = await getUserByClerkId(clerkUserId);
+    const userId = userResult[0].id;
+
+    const deleted = await deleteCompanyMembershipsById(companyMembershipId, userId);
 
     if (deleted.length === 0) {
 			return Response.json(

@@ -33,9 +33,9 @@ export default clerkMiddleware(async (auth, req) => {
         { status: 401 }
       );
     }
+    
+    return NextResponse.redirect(new URL('/sign-in', req.url));
   }
-
-  return NextResponse.redirect(new URL('/sign-in', req.url));
 });
 
 export const config = {
