@@ -1,11 +1,10 @@
 import DashboardHeader from "@/components/shared/DashboardHeader";
 import Connect from "@/components/dashboard/Connect";
-import Alert from "@/components/shared/Alert";
+import DashboardContainer from "@/components/dashboard/DashboardContainer";
 
-import { getCompaniesByUser } from "@/lib/queries/companies/get-companies-by-user";
 import { auth } from "@clerk/nextjs/server";
-import { getUserByClerkId } from "@/lib/queries/users/get-user-by-clerk-id";
 import { redirect } from "next/navigation";
+import { getDashboardData } from "@/lib/dashboard/get-dashboard-data";
 
 export default async function DashboardPage() {
 
@@ -13,22 +12,17 @@ export default async function DashboardPage() {
 
   if (!clerkId) redirect("/sign-in");
   
-  const userResult = await getUserByClerkId(clerkId);
-  const userId = userResult[0].id as string;
-  const companies = await getCompaniesByUser(userId);
+  const dashboardData = await getDashboardData(clerkId, 2026);
 
   return (
     <main className="w-full overflow-y-auto p-4 lg:p-8">
-      <DashboardHeader title="Dashboard" description="Overview of your financial performance"/>
-      <div className="grid grid-cols-1 gap-6 2xl:grid-cols-2">
-        {companies.length === 0
-          ? <Connect/>
-          : <Alert
-              title="Providers Connected - Data Syncing"
-              description="Your connected providers are syncing data. Your data will appear once the job is complete."
-            />
-        }
-      </div>
+      <DashboardHeader title="Executive P&L" description="Period: 2025"/>
+      {dashboardData.companies.length === 0
+        ? <div className="grid grid-cols-1 gap-6 2xl:grid-cols-2">
+            <Connect/>
+          </div>
+        : <DashboardContainer data={dashboardData}/>
+      }
     </main>
   );
 }
