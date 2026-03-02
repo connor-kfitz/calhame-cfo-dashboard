@@ -1,7 +1,7 @@
 import { pool } from "../../db";
 import type { PoolClient } from "pg";
 
-export async function storeCompany(providerCompanyId: string, name: string, providerId: string, client?: PoolClient) {
+export default async function upsertCompany(providerCompanyId: string, name: string, providerId: string, client?: PoolClient) {
   const database = client ?? pool;
 
   const result = await database.query(

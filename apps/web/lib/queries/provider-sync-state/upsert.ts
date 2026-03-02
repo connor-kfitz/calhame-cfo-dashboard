@@ -2,7 +2,7 @@ import { Entity } from "@repo/shared";
 import { pool } from "../../db";
 import type { PoolClient } from "pg";
 
-export async function storeSyncState(connectionId: string, entities: Entity[], client?: PoolClient) {
+export default async function upsertSyncState(connectionId: string, entities: Entity[], client?: PoolClient) {
   const database = client ?? pool;
 
   const result = await database.query(

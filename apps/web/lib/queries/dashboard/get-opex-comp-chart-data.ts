@@ -1,7 +1,7 @@
 import { pool } from "@/lib/db";
 import type { PoolClient } from "pg";
 
-export async function getOpexCompChartData(
+export default async function getOpexCompositionChartData(
   companyId: string,
   year: number,
   client?: PoolClient

@@ -1,7 +1,7 @@
-import { pool } from "../../db";
+import { pool } from "../../../db";
 import type { PoolClient } from "pg";
 
-export async function getIdByDisplayName(displayName: string, client?: PoolClient) {
+export default async function getProviderByDisplayName(displayName: string, client?: PoolClient) {
   const database = client ?? pool;
 
   const result = await database.query(
@@ -13,5 +13,5 @@ export async function getIdByDisplayName(displayName: string, client?: PoolClien
     throw new Error("Accounting provider not found");
   }
 
-  return result.rows[0].id;
+  return result.rows[0];
 }

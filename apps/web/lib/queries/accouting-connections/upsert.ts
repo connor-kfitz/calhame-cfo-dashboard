@@ -2,7 +2,7 @@ import { pool } from "@/lib/db";
 import { encryptTokenForStorage } from "@/lib/token-crypto";
 import type { PoolClient } from "pg";
 
-export async function storeAccountingConnection(
+export default async function upsertAccountingConnection(
   companyId: string,
   accessToken: string,
   refreshToken: string,

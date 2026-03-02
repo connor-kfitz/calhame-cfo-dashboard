@@ -1,7 +1,7 @@
 import { pool } from "@/lib/db";
 import type { PoolClient } from "pg";
 
-export async function getBurn(
+export default async function getTopExpense(
   companyId: string,
   year: number,
   client?: PoolClient
@@ -13,14 +13,16 @@ export async function getBurn(
 
   const result = await database.query(`
     SELECT
-      DATE_TRUNC('month', date) AS month,
-      SUM(amount) AS monthly_opex
+      category,
+      SUM(amount) AS total
     FROM expenses
     WHERE company_id = $1
     AND date BETWEEN $2 AND $3
-    GROUP BY 1
-    ORDER BY 1;
-  `, [companyId, startDate, endDate]);
+    GROUP BY category
+    ORDER BY total DESC
+    LIMIT 1;
+  `, [companyId, startDate, endDate]
+  );
 
-  return result.rows[0].monthly_opex;
+  return result.rows[0];
 }

@@ -1,26 +1,27 @@
-import { getUserByClerkId } from "../queries/users/get-user-by-clerk-id";
-import { getCompaniesByUser } from "../queries/companies/get-companies-by-user";
-import { getRevenueByCompanyId } from "../queries/dashboard/get-revenue-by-company-id";
-import { getCogsByCompanyId } from "../queries/dashboard/get-cogs-by-company-id";
-import { DashboardData } from "@repo/shared";
-import { getTotalOpexByCompanyId } from "../queries/dashboard/get-total-opex-by-company-id";
-import { getBurn } from "../queries/dashboard/get-burn-by-company-id";
-import { getTopExpense } from "../queries/dashboard/get-top-expense-by-company-id";
-import { getAverageMonthlyBurn, getBurnEfficency, getCogsPercentageOfRevenue, getExpensePercentageOfOpex, getGrossMarginPercentage, getNetProfitLoss, getOpexRevenueRatio, getProfit } from "../accounting-formulas";
-import { getRevenueExpenseChartData } from "../queries/dashboard/get-revenue-expense-chart-data";
-import { getOpexCompChartData } from "../queries/dashboard/get-opex-comp-chart-data";
+import getCompaniesByUser from "../companies/user-id/get";
+import getUserByClerkId from "../users/clerk-id/get";
+import getBurn from "./get-burn";
+import getCogs from "./get-cogs";
+import getOpexCompChartData from "./get-opex-comp-chart-data";
+import getRevenueExpenseChartData from "./get-rev-exp-chart-data";
+import getRevenue from "./get-revenue";
+import getTopExpense from "./get-top-expense";
+import getTotalOpex from "./get-total-opex";
 
-export async function getDashboardData(clerkId: string, year: number): Promise<DashboardData> {
+import { DashboardData } from "@repo/shared";
+import { getAverageMonthlyBurn, getBurnEfficency, getCogsPercentageOfRevenue, getExpensePercentageOfOpex, getGrossMarginPercentage, getNetProfitLoss, getOpexRevenueRatio, getProfit } from "@/lib/accounting-formulas";
+
+export default async function getDashboardData(clerkId: string, year: number): Promise<DashboardData> {
 
   const userResult = await getUserByClerkId(clerkId);
   const userId = userResult[0].id as string;
 
   const companyMembershipResults = await getCompaniesByUser(userId);
   const companyIds = companyMembershipResults.map((membership) => membership.companyId);
-  
-  const totalRevenueResult = await getRevenueByCompanyId(companyIds[0], year);
-  const totalCogsResult = await getCogsByCompanyId(companyIds[0], year);
-  const totalOpexResult = await getTotalOpexByCompanyId(companyIds[0], year);
+
+  const totalRevenueResult = await getRevenue(companyIds[0], year);
+  const totalCogsResult = await getCogs(companyIds[0], year);
+  const totalOpexResult = await getTotalOpex(companyIds[0], year);
   const burnResult = await getBurn(companyIds[0], year);
   const topExpenseResult = await getTopExpense(companyIds[0], year);
 

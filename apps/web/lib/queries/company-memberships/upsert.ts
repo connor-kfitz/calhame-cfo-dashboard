@@ -1,7 +1,7 @@
 import { pool } from "@/lib/db";
 import type { PoolClient } from "pg";
 
-export async function storeCompanyMembership(userId: string, companyId: string, role: string = "member", client?: PoolClient) {
+export default async function upsertCompanyMembership(userId: string, companyId: string, role: string = "member", client?: PoolClient) {
 	const database = client ?? pool;
 
 	const result = await database.query(
@@ -15,7 +15,7 @@ export async function storeCompanyMembership(userId: string, companyId: string, 
 	);
 
 	if (result.rowCount === 0) {
-		throw new Error("Failed to store company membership");
+		throw new Error("Failed to upsert company membership");
 	}
 
 	return result.rows[0];

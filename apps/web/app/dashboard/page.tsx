@@ -1,10 +1,10 @@
 import DashboardHeader from "@/components/shared/DashboardHeader";
 import Connect from "@/components/dashboard/Connect";
 import DashboardContainer from "@/components/dashboard/DashboardContainer";
+import getDashboardData from "@/lib/queries/dashboard/index";
 
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { getDashboardData } from "@/lib/dashboard/get-dashboard-data";
 
 export default async function DashboardPage() {
 

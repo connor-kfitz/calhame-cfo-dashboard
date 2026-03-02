@@ -1,7 +1,7 @@
 import { pool } from "@/lib/db";
 import type { PoolClient } from "pg";
 
-export async function deleteCompanyMembershipsById(companyMembershipId: string, userId: string, client?: PoolClient) {
+export default async function deleteCompanyMembershipsById(companyMembershipId: string, userId: string, client?: PoolClient) {
   const database = client ?? pool;
 
   const deleteCompanyMembershipResult = await database.query(

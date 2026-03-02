@@ -1,7 +1,7 @@
 import { pool } from "@/lib/db";
 import type { PoolClient } from "pg";
 
-export async function getCogsByCompanyId(
+export default async function getCogs(
   companyId: string,
   year: number,
   client?: PoolClient

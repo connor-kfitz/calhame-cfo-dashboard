@@ -1,9 +1,9 @@
 import DashboardHeader from "@/components/shared/DashboardHeader";
 import AccountingProvidersContainer from "@/components/dashboard/connect/AccountingProvidersContainer";
+import getCompaniesByUser from "@/lib/queries/companies/user-id/get";
+import getUserByClerkId from "@/lib/queries/users/clerk-id/get";
 
-import { getCompaniesByUser } from "@/lib/queries/companies/get-companies-by-user";
 import { auth } from "@clerk/nextjs/server";
-import { getUserByClerkId } from "@/lib/queries/users/get-user-by-clerk-id";
 import { redirect } from "next/navigation";
 
 export default async function DashboardConnectPage() {

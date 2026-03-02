@@ -1,5 +1,6 @@
-import { deleteCompanyMembershipsById } from "@/lib/queries/company-memberships/delete-company-memberships-by-id";
-import { getUserByClerkId } from "@/lib/queries/users/get-user-by-clerk-id";
+import deleteCompanyMembershipsById from "@/lib/queries/company-memberships/id/delete";
+import getUserByClerkId from "@/lib/queries/users/clerk-id/get";
+
 import { auth } from "@clerk/nextjs/server";
 
 export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {

@@ -1,4 +1,4 @@
-export async function getCompanyName(realmId: string, accessToken: string): Promise<string> {
+export default async function getCompanyName(realmId: string, accessToken: string): Promise<string> {
   
   const response = await fetch(
     `${process.env.QUICKBOOKS_BASE_URL}/v3/company/${realmId}/companyinfo/${realmId}`,
@@ -17,5 +17,4 @@ export async function getCompanyName(realmId: string, accessToken: string): Prom
   const data = await response.json();
   
   return data.CompanyInfo.CompanyName;
-
 }

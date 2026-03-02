@@ -1,16 +1,17 @@
+import upsertAccountingConnection from "@/lib/queries/accouting-connections/upsert";
+import upsertCompanyMembership from "@/lib/queries/company-memberships/upsert";
+import upsertSyncState from "@/lib/queries/provider-sync-state/upsert";
+import getUserByClerkId from "@/lib/queries/users/clerk-id/get";
+import upsertCompany from "@/lib/queries/companies/upsert";
+import getProviderByDisplayName from "@/lib/queries/providers/display-name/get";
+import getCompanyName from "@/lib/queries/quickbooks/company-name/get";
+
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { auth } from "@clerk/nextjs/server";
 import { pool } from "@/lib/db";
-import { storeCompany } from "@/lib/queries/quickbooks/store-company";
-import { getCompanyName } from "@/lib/queries/quickbooks/get-company-name";
-import { storeAccountingConnection } from "@/lib/queries/accouting-connection/store-accounting-connection";
-import { storeCompanyMembership } from "@/lib/queries/company-memberships/store-company-membership";
-import { getUserByClerkId } from "@/lib/queries/users/get-user-by-clerk-id";
 import { accountingQueue } from "@/lib/accounting-queue";
 import { ENTITIES, SYNC_COMPANY_JOB } from "@repo/shared";
-import { getIdByDisplayName } from "@/lib/queries/providers/get-id-by-display-name";
-import { storeSyncState } from "@/lib/queries/provider-sync-state/store-sync-state";
 
 const clientId = process.env.QUICKBOOKS_CLIENT_ID!;
 const clientSecret = process.env.QUICKBOOKS_CLIENT_SECRET!;
@@ -96,18 +97,18 @@ export async function GET(req: NextRequest) {
       const userResult = await getUserByClerkId(clerkId, client);
       const userId = userResult[0].id;
 
-      const providerId = await getIdByDisplayName("quickbooks", client);
-      const company = await storeCompany(realmId, companyName, providerId, client);
-      await storeCompanyMembership(userId, company.id, "member", client);
+      const provider = await getProviderByDisplayName("quickbooks", client);
+      const company = await upsertCompany(realmId, companyName, provider.id, client);
+      await upsertCompanyMembership(userId, company.id, "member", client);
 
-      const accountingConnection = await storeAccountingConnection(
+      const accountingConnection = await upsertAccountingConnection(
         company.id, data.access_token, data.refresh_token,
         accessTokenExpiresAt, refreshTokenExpiresAt, client
       );
 
-      storeSyncState(accountingConnection.id, ENTITIES, client)
+      upsertSyncState(accountingConnection.id, ENTITIES, client)
 
-      if (!company.id || !providerId) {
+      if (!company.id || !provider.id) {
         return new Response(JSON.stringify({ error: { message: 'Missing parameters' } }), { status: 400 });
       }
     

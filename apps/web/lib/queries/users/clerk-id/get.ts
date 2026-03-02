@@ -1,7 +1,7 @@
 import { pool } from "@/lib/db";
 import type { PoolClient } from "pg";
 
-export async function getUserByClerkId(clerkId: string, client?: PoolClient) {
+export default async function getUserByClerkId(clerkId: string, client?: PoolClient) {
   const database = client ?? pool;
 
   const userResult = await database.query(

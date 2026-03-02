@@ -1,7 +1,7 @@
 import { pool } from "@/lib/db";
 import type { PoolClient } from "pg";
 
-export async function getRevenueByCompanyId(
+export default async function getRevenue(
 	companyId: string,
 	year: number,
 	client?: PoolClient
