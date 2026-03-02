@@ -95,7 +95,7 @@ export async function GET(req: NextRequest) {
       await client.query("BEGIN");
 
       const userResult = await getUserByClerkId(clerkId, client);
-      const userId = userResult[0].id;
+      const userId = userResult.id;
 
       const provider = await getProviderByDisplayName("quickbooks", client);
       const company = await upsertCompany(realmId, companyName, provider.id, client);

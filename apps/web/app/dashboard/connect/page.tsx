@@ -13,7 +13,7 @@ export default async function DashboardConnectPage() {
   if (!clerkId) redirect("/sign-in");
 
   const userResult = await getUserByClerkId(clerkId);
-  const userId = userResult[0].id as string;
+  const userId = userResult.id as string;
   const companies = await getCompaniesByUser(userId);
 
   return (

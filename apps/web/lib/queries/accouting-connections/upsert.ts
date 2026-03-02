@@ -15,8 +15,8 @@ export default async function upsertAccountingConnection(
   const encryptedAccessToken = encryptTokenForStorage(accessToken);
   const encryptedRefreshToken = encryptTokenForStorage(refreshToken);
 
-  const result = await databbase.query(
-    `WITH updated AS (
+  const result = await databbase.query(`
+    WITH updated AS (
       UPDATE accounting_connections ac
       SET
         access_token = $2,
@@ -53,9 +53,8 @@ export default async function upsertAccountingConnection(
     )
     SELECT * FROM updated
     UNION ALL
-    SELECT * FROM inserted`,
-    [companyId, encryptedAccessToken, encryptedRefreshToken, accessTokenExpiresAt, refreshTokenExpiresAt]
-  );
+    SELECT * FROM inserted
+  `, [companyId, encryptedAccessToken, encryptedRefreshToken, accessTokenExpiresAt, refreshTokenExpiresAt]);
 
   if (result.rowCount === 0) {
     throw new Error(

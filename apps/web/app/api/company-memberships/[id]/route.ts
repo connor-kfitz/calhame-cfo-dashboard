@@ -24,16 +24,9 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
 		}
 
     const userResult = await getUserByClerkId(clerkUserId);
-    const userId = userResult[0].id;
+    const userId = userResult.id;
 
-    const deleted = await deleteCompanyMembershipsById(companyMembershipId, userId);
-
-    if (deleted.length === 0) {
-			return Response.json(
-        { error: { message: "Company membership not found" } },
-        { status: 404 }
-      );
-		}
+    await deleteCompanyMembershipsById(companyMembershipId, userId);
 
 		return new Response(null, { status: 204 });
 	} catch (error) {

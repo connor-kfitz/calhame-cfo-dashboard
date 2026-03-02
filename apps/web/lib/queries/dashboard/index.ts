@@ -14,7 +14,7 @@ import { getAverageMonthlyBurn, getBurnEfficency, getCogsPercentageOfRevenue, ge
 export default async function getDashboardData(clerkId: string, year: number): Promise<DashboardData> {
 
   const userResult = await getUserByClerkId(clerkId);
-  const userId = userResult[0].id as string;
+  const userId = userResult.id as string;
 
   const companyMembershipResults = await getCompaniesByUser(userId);
   const companyIds = companyMembershipResults.map((membership) => membership.companyId);
