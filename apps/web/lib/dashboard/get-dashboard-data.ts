@@ -7,6 +7,8 @@ import { getTotalOpexByCompanyId } from "../queries/dashboard/get-total-opex-by-
 import { getBurn } from "../queries/dashboard/get-burn-by-company-id";
 import { getTopExpense } from "../queries/dashboard/get-top-expense-by-company-id";
 import { getAverageMonthlyBurn, getBurnEfficency, getCogsPercentageOfRevenue, getExpensePercentageOfOpex, getGrossMarginPercentage, getNetProfitLoss, getOpexRevenueRatio, getProfit } from "../accounting-formulas";
+import { getRevenueExpenseChartData } from "../queries/dashboard/get-revenue-expense-chart-data";
+import { getOpexCompChartData } from "../queries/dashboard/get-opex-comp-chart-data";
 
 export async function getDashboardData(clerkId: string, year: number): Promise<DashboardData> {
 
@@ -21,6 +23,9 @@ export async function getDashboardData(clerkId: string, year: number): Promise<D
   const totalOpexResult = await getTotalOpexByCompanyId(companyIds[0], year);
   const burnResult = await getBurn(companyIds[0], year);
   const topExpenseResult = await getTopExpense(companyIds[0], year);
+
+  const revenueExpenseChartData = await getRevenueExpenseChartData(companyIds[0], year);
+  const opexCompChartData = await getOpexCompChartData(companyIds[0], year);
 
   return {
     year,
@@ -69,6 +74,8 @@ export async function getDashboardData(clerkId: string, year: number): Promise<D
         info: `${getExpensePercentageOfOpex(topExpenseResult.total, totalOpexResult)}% of OpEx`
       }
     ],
+    revenueExpenseChartData: revenueExpenseChartData,
+    opexCompChartData: opexCompChartData,
     companies: companyMembershipResults
   }
 }

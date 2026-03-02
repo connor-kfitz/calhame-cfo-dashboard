@@ -20,12 +20,25 @@ export type DashboardData = {
   year: number;
   infoCards: InfoCardData[];
   companies: string[];
+  revenueExpenseChartData: RevenueExpenseChartData[];
+  opexCompChartData: OpexCompChartData[];
 }
 
 export type InfoCardData = {
   title: string;
   value: string;
   info?: string;
+}
+
+export type RevenueExpenseChartData = {
+  month: string;
+  revenue: number | null;
+  opex: number | null;
+}
+
+export type OpexCompChartData = {
+  category: string;
+  total: number;
 }
 
 export type Quarter = "year" | "q1" | "q2" | "q3" | "q4";
