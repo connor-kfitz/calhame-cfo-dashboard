@@ -17,7 +17,8 @@ export type ErrorDialog = {
 }
 
 export type DashboardData = {
-  year: number;
+  years: number[];
+  quarters: Quarter[];
   infoCards: InfoCardData[];
   companies: string[];
   revenueExpenseChartData: RevenueExpenseChartData[];

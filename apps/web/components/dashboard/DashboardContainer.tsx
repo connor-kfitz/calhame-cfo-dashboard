@@ -1,5 +1,6 @@
 import InfoCard from "./InfoCard";
 import QuarterSelection from "./QuarterSelection";
+import YearSelection from "./YearSelection";
 import RevenueChart from "./RevenueChart";
 import OpexPieChart from "./OpexPieChart";
 
@@ -12,10 +13,10 @@ interface DashboardContainerProps {
 }
 
 export default function DashboardContainer({ data, quarter, year }: DashboardContainerProps) {
-
   return (
     <div className="flex flex-col gap-4">
-      <QuarterSelection value={quarter} year={year}/>
+      <YearSelection value={year} quarter={quarter} years={data.years}/>
+      <QuarterSelection value={quarter} year={year} quarters={data.quarters}/>
       <ul className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
         {data.infoCards.map((card, index) => (
           <li key={index} className="min-w-0">

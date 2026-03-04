@@ -15,5 +15,5 @@ export default async function getBurn(companyId: string, startDate: string, endD
     ORDER BY 1;
   `, [companyId, startDate, endDate]);
 
-  return result.rows[0].monthly_opex;
+  return result.rows[0]?.monthly_opex ?? 0;
 }

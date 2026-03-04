@@ -7,6 +7,8 @@ import getRevenueExpenseChartData from "./get-rev-exp-chart-data";
 import getRevenue from "./get-revenue";
 import getTopExpense from "./get-top-expense";
 import getTotalOpex from "./get-total-opex";
+import getYears from "./get-years";
+import getQuarters from "./get-quarters";
 
 import { DashboardData, Quarter } from "@repo/shared";
 import { getAverageMonthlyBurn, getBurnEfficency, getCogsPercentageOfRevenue, getExpensePercentageOfOpex, getGrossMarginPercentage, getNetProfitLoss, getOpexRevenueRatio, getProfit } from "@/lib/accounting-formulas";
@@ -30,9 +32,13 @@ export default async function getDashboardData(clerkId: string, quarter: Quarter
 
   const revenueExpenseChartData = await getRevenueExpenseChartData(companyIds[0], startDate, endDate);
   const opexCompChartData = await getOpexCompChartData(companyIds[0], startDate, endDate);
+  
+  const yearsResult = await getYears(companyIds[0]);
+  const quarters = await getQuarters(companyIds[0], year);
 
   return {
-    year,
+    years: yearsResult,
+    quarters: quarters,
     infoCards: [
       {
         title: "Total Revenue",
@@ -74,8 +80,8 @@ export default async function getDashboardData(clerkId: string, quarter: Quarter
       },
       {
         title: "Top Expense",
-        value: `${topExpenseResult.category}`,
-        info: `${getExpensePercentageOfOpex(topExpenseResult.total, totalOpexResult)}% of OpEx`
+        value: `${topExpenseResult?.category ?? ""}`,
+        info: `${getExpensePercentageOfOpex(topExpenseResult?.total ?? 0, totalOpexResult)}% of OpEx`
       }
     ],
     revenueExpenseChartData: revenueExpenseChartData,
