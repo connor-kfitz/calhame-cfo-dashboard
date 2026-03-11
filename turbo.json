@@ -18,6 +18,13 @@
         "TOKEN_ENCRYPTION_KEY"
       ]
     },
+    "start": {
+      "dependsOn": [
+        "build"
+      ],
+      "cache": false,
+      "persistent": true
+    },
     "lint": {
       "dependsOn": ["^lint"]
     },
