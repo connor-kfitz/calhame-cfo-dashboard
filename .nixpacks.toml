@@ -1,0 +1,8 @@
+[phases.build]
+cmds = [
+  "npm ci",
+  "npx turbo run build --filter=worker"
+]
+
+[start]
+cmd = "node apps/worker/dist/index.js"
