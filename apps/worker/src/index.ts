@@ -7,7 +7,7 @@ import { redisConnection } from './lib/redis.js';
 import { handleSyncCompany } from './jobs/sync-company.job.js';
 import { ACCOUNTING_QUEUE, SYNC_COMPANY_JOB } from '@repo/shared';
 
-console.log('Worker starting...');
+console.log('Worker starting... Forced environment variables');
 
 const worker = new Worker(
   ACCOUNTING_QUEUE,
