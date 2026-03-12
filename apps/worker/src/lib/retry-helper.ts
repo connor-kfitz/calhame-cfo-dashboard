@@ -8,6 +8,7 @@ interface RetryOptions {
 interface FetchError extends Error {
   status?: number;
   code?: string;
+  response?: Response;
 }
 
 function isRetryableError(error: FetchError): boolean {
@@ -58,6 +59,30 @@ function calculateBackoff(attempt: number, baseDelayMs: number, maxDelayMs: numb
   return Math.min(totalDelay, maxDelayMs);
 }
 
+/**
+ * Parse Retry-After header from a response
+ * Returns delay in milliseconds, or null if header is not present/invalid
+ */
+function parseRetryAfter(response?: Response): number | null {
+  if (!response) return null;
+  
+  const retryAfter = response.headers.get('Retry-After');
+  if (!retryAfter) return null;
+  
+  const seconds = parseInt(retryAfter, 10);
+  if (!isNaN(seconds)) {
+    return seconds * 1000;
+  }
+  
+  const retryDate = new Date(retryAfter);
+  if (!isNaN(retryDate.getTime())) {
+    const delayMs = retryDate.getTime() - Date.now();
+    return Math.max(0, delayMs);
+  }
+  
+  return null;
+}
+
 function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -97,7 +122,20 @@ export async function withRetry<T>(
         throw lastError;
       }
       
-      const delayMs = calculateBackoff(attempt, baseDelayMs, maxDelayMs);
+      const fetchError = lastError as FetchError;
+      
+      let delayMs: number;
+      if (fetchError.status === 429) {
+        const retryAfterMs = parseRetryAfter(fetchError.response);
+        if (retryAfterMs !== null) {
+          delayMs = retryAfterMs;
+          console.log(`[Rate Limit] Using Retry-After header: ${delayMs}ms`);
+        } else {
+          delayMs = calculateBackoff(attempt, baseDelayMs, maxDelayMs);
+        }
+      } else {
+        delayMs = calculateBackoff(attempt, baseDelayMs, maxDelayMs);
+      }
       
       onRetry(lastError, attempt + 1, delayMs);
       

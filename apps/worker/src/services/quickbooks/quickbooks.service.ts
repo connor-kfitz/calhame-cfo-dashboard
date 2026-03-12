@@ -80,8 +80,9 @@ async function refreshQuickBooksAccessToken(refreshToken: string) {
 
     if (!response.ok) {
       const errorText = await response.text();
-      const error = new Error(`QuickBooks token refresh failed: ${errorText}`) as Error & { status?: number };
+      const error = new Error(`QuickBooks token refresh failed: ${errorText}`) as Error & { status?: number; response?: Response };
       error.status = response.status;
+      error.response = response;
       throw error;
     }
 

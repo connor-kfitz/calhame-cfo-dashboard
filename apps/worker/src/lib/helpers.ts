@@ -32,8 +32,9 @@ export async function quickbooksRequest(
 
     if (!res.ok) {
       const text = await res.text();
-      const error = new Error(`QuickBooks request failed: ${res.status} ${text}`) as Error & { status?: number };
+      const error = new Error(`QuickBooks request failed: ${res.status} ${text}`) as Error & { status?: number; response?: Response };
       error.status = res.status;
+      error.response = res;
       throw error;
     }
 
