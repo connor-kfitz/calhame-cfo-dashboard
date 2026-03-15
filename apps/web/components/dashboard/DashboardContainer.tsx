@@ -15,8 +15,10 @@ interface DashboardContainerProps {
 export default function DashboardContainer({ data, quarter, year }: DashboardContainerProps) {
   return (
     <div className="flex flex-col gap-4">
-      <YearSelection value={year} years={data.years}/>
-      <QuarterSelection value={quarter} year={year} quarters={data.quarters}/>
+      <div className="flex items-center gap-4">
+        <YearSelection value={year} years={data.years}/>
+        <QuarterSelection value={quarter} year={year} quarters={data.quarters}/>
+      </div>
       <ul className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
         {data.infoCards.map((card, index) => (
           <li key={index} className="min-w-0">

@@ -1,6 +1,7 @@
-import Link from "next/link";
+"use client";
 
-import { cn } from "@/lib/utils";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface YearSelectionProps {
   value: number;
@@ -8,28 +9,30 @@ interface YearSelectionProps {
 }
 
 export default function YearSelection({ value, years }: YearSelectionProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const handleYearChange = (newYear: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('year', newYear);
+    params.set('quarter', 'year');
+    router.push(`?${params.toString()}`);
+  }
+
   return (
     <div className="flex items-center gap-2">
-      <span className="text-sm font-medium text-foreground">Year:</span>
-      <div className="flex items-center gap-1">
-        {years.map((year) => {
-          const selected = value === year;
-          return (
-            <Link
-              key={year}
-              href={`?quarter=year&year=${year}`}
-              className={cn(
-                "px-3 py-1.5 text-sm rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-                selected
-                  ? "bg-primary text-primary-foreground font-medium"
-                  : "bg-secondary hover:bg-secondary/80 text-secondary-foreground"
-              )}
-            >
-              {year}
-            </Link>
-          );
-        })}
-      </div>
+      <Select value={value.toString()} onValueChange={handleYearChange}>
+        <SelectTrigger className="w-28">
+          <SelectValue placeholder="Year" />
+        </SelectTrigger>
+        <SelectContent>
+          {years.map((y) => (
+            <SelectItem key={y} value={y.toString()}>
+              {y}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 }
