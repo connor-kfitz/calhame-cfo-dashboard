@@ -31,6 +31,10 @@ export default function OpexPieChart({ data }: OpexPieChartProps) {
       fill: COLORS[index % COLORS.length],
     }));
 
+  if (!chartData || chartData.length === 0) {
+    return null;
+  }
+
   const config = chartData.reduce((acc, item, index) => {
     acc[item.name] = {
       label: item.name,

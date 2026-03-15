@@ -12,6 +12,11 @@ interface RevenueChartProps {
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 export default function RevenueChart({ data }: RevenueChartProps) {
+
+  if (!data || data.length === 0) {
+    return null;
+  }
+
   const config = {
     revenue: { label: "Revenue", color: "#3b82f6" },
     opex: { label: "OpEx", color: "#ef4444" }
@@ -29,6 +34,12 @@ export default function RevenueChart({ data }: RevenueChartProps) {
       }
     })
     .sort((a, b) => a.monthIndex - b.monthIndex);
+
+  // Don't render if all data points are null
+  const hasData = sortedData.some((row) => row.revenue !== null || row.opex !== null);
+  if (!hasData) {
+    return null;
+  }
 
   return (
     <Card>
