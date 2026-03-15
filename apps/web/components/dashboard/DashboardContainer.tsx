@@ -19,14 +19,14 @@ export default function DashboardContainer({ data, quarter, year }: DashboardCon
         <YearSelection value={year} years={data.years}/>
         <QuarterSelection value={quarter} year={year} quarters={data.quarters}/>
       </div>
-      <ul className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+      <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {data.infoCards.map((card, index) => (
-          <li key={index} className="min-w-0">
+          <li key={index} className="min-w-0 h-full">
             <InfoCard
               title={card.title}
               value={card.value}
               info={card.info}
-              className="w-full"
+              className="w-full h-full"
             />
           </li>
         ))}

@@ -32,13 +32,8 @@ export default async function getDashboardData(companyId: string, quarter: Quart
     years: yearsResult,
     quarters: quarters,
     infoCards: buildInfoCards(
-      totalRevenueResult,
-      totalCogsResult,
-      totalOpexResult,
-      burnResult,
-      topExpenseResult,
-      monthsInPeriod,
-      year
+      totalRevenueResult, totalCogsResult, totalOpexResult,
+      burnResult, topExpenseResult, monthsInPeriod, year
     ),
     revenueExpenseChartData: revenueExpenseChartData,
     opexCompChartData: opexCompChartData

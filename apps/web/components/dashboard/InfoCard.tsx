@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { cx } from "class-variance-authority";
 
 interface InfoCardProps {
@@ -10,21 +10,23 @@ interface InfoCardProps {
 
 export default function InfoCard({ title, value, info, className }: InfoCardProps) {
   return (
-    <Card className={cx(className, "gap-1 h-full")}>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
+    <Card className={cx(className, "border-border shadow-sm gap-2")}>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <CardTitle className="text-sm font-medium text-muted-foreground">
+          {title}
+        </CardTitle>
       </CardHeader>
 
       <CardContent>
-        <div className="text-3xl font-semibold text-foreground">{value}</div>
+        <div className="text-2xl font-semibold tracking-tight text-foreground">
+          {value}
+        </div>
+        {info && (
+          <p className="mt-1 text-xs text-muted-foreground">
+            {info}
+          </p>
+        )}
       </CardContent>
-
-      {info
-        ? <CardFooter>
-            <div className="text-sm text-muted-foreground">{info}</div>
-          </CardFooter>
-        : null
-      }
     </Card>
   );
 }

@@ -9,11 +9,11 @@ export function getGrossMarginPercentage(cogs: number, revenue: number): number 
 }
 
 export function getProfit(revenue: number, cogs: number): number {
-  return revenue - cogs;
+  return parseFloat((revenue - cogs).toFixed(2));
 }
 
 export function getNetProfitLoss(revenue: number, cogs: number, opex: number): number {
-  return revenue - cogs - opex;
+  return parseFloat((revenue - cogs - opex).toFixed(2));
 }
 
 export function getBurnEfficency(totalOpex: number, totalRevenue: number): string {
