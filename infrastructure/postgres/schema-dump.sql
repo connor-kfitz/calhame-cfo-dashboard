@@ -8,8 +8,8 @@ CREATE TABLE users (
     first_name TEXT NOT NULL,
     last_name TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
-    created_at TIMESTAMP NOT NULL DEFAULT now(),
-    updated_at TIMESTAMP NOT NULL DEFAULT now()
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 CREATE TABLE companies (
@@ -17,8 +17,8 @@ CREATE TABLE companies (
     provider_company_id TEXT NOT NULL,
     provider_id TEXT NOT NULL REFERENCES accounting_providers(id),
     name TEXT NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT now(),
-    updated_at TIMESTAMP NOT NULL DEFAULT now(),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
 
     UNIQUE(provider_company_id, provider_id)
 );
@@ -29,7 +29,7 @@ CREATE TABLE company_memberships (
     company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
 
     role TEXT NOT NULL DEFAULT 'member',
-    created_at TIMESTAMP NOT NULL DEFAULT now(),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
 
     UNIQUE(user_id, company_id)
 );
@@ -47,14 +47,15 @@ CREATE TABLE accounting_connections (
 
     access_token TEXT NOT NULL,
     refresh_token TEXT,
-    access_token_expires_at TIMESTAMP,
-    refresh_token_expires_at TIMESTAMP,
+    access_token_expires_at TIMESTAMPTZ,
+    refresh_token_expires_at TIMESTAMPTZ,
 
     status TEXT NOT NULL DEFAULT 'active',
 
-    last_synced_at TIMESTAMP,
-    created_at TIMESTAMP NOT NULL DEFAULT now(),
-    updated_at TIMESTAMP NOT NULL DEFAULT now()
+    last_synced_at TIMESTAMPTZ,
+    last_sync_requested_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 
 );
 
@@ -63,8 +64,8 @@ CREATE TABLE provider_sync_state (
     connection_id UUID NOT NULL REFERENCES accounting_connections(id) ON DELETE CASCADE,
     entity_type TEXT NOT NULL,
     cursor TEXT,
-    last_synced_at TIMESTAMP,
-    created_at TIMESTAMP NOT NULL DEFAULT now(),
+    last_synced_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
 
     UNIQUE(connection_id, entity_type)
 );
@@ -100,11 +101,11 @@ CREATE TABLE IF NOT EXISTS revenue_transactions (
     provider_metadata JSONB,
     
     -- Provider modification tracking for incremental sync
-    provider_last_modified_at TIMESTAMP,
+    provider_last_modified_at TIMESTAMPTZ,
 
     -- Metadata
-    created_at TIMESTAMP NOT NULL DEFAULT now(),
-    updated_at TIMESTAMP NOT NULL DEFAULT now(),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
 
     CONSTRAINT revenue_transactions_unique 
         UNIQUE (company_id, provider_id, provider_transaction_id, provider_transaction_type)
@@ -139,11 +140,11 @@ CREATE TABLE IF NOT EXISTS cogs_transactions (
     provider_metadata JSONB,
     
     -- Provider modification tracking for incremental sync
-    provider_last_modified_at TIMESTAMP,
+    provider_last_modified_at TIMESTAMPTZ,
 
     -- Metadata
-    created_at TIMESTAMP NOT NULL DEFAULT now(),
-    updated_at TIMESTAMP NOT NULL DEFAULT now(),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
 
     CONSTRAINT cogs_transactions_unique 
         UNIQUE (company_id, provider_id, provider_transaction_id, provider_transaction_type)
@@ -179,11 +180,11 @@ CREATE TABLE IF NOT EXISTS expense_transactions (
     provider_metadata JSONB,
     
     -- Provider modification tracking for incremental sync
-    provider_last_modified_at TIMESTAMP,
+    provider_last_modified_at TIMESTAMPTZ,
 
     -- Metadata
-    created_at TIMESTAMP NOT NULL DEFAULT now(),
-    updated_at TIMESTAMP NOT NULL DEFAULT now(),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
 
     CONSTRAINT expense_transactions_unique 
         UNIQUE (company_id, provider_id, provider_transaction_id, provider_transaction_type)

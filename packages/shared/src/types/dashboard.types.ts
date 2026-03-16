@@ -9,6 +9,9 @@ export type CompanyListItem = {
   companyId: string;
   companyName: string;
   providerName: string;
+  connectionId: string | null;
+  lastSyncedAt: Date | null;
+  lastSyncRequestedAt: Date | null;
 }
 
 export type ErrorDialog = {

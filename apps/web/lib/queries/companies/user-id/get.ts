@@ -9,7 +9,10 @@ export default async function getCompaniesByUser(userId: string, client?: PoolCl
       cm.id AS "companyMembershipId",
       c.id AS "companyId",
       c.name AS "companyName",
-      ap.display_name AS "providerName"
+      ap.display_name AS "providerName",
+      ac.id AS "connectionId",
+      ac.last_synced_at AS "lastSyncedAt",
+      ac.last_sync_requested_at AS "lastSyncRequestedAt"
     FROM company_memberships cm
     JOIN companies c
       ON c.id = cm.company_id

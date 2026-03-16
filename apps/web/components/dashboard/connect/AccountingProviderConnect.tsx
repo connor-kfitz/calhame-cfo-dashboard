@@ -1,12 +1,14 @@
 "use client";
 
+import SyncButton from "./SyncButton";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { capitalizeFirstLetter } from "@/lib/utils";
 import { AccountingProvider, CompanyListItem, ENTITIES, ErrorDialog } from "@repo/shared";
-import { CloudSync, Link2, Link2Off } from "lucide-react";
+import { Link2, Link2Off } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -18,6 +20,7 @@ interface AccountingProviderConnectProps {
 
 export default function AccountingProviderConnect({ provider, companies, setErrorDialog }: AccountingProviderConnectProps) {
 	const [loadingDisconnect, setLoadingDisconnect] = useState<string>("");
+	const [loadingSync, setLoadingSync] = useState<boolean>(false);
 
   const connected = companies.length > 0;
   const providerCapitalized = capitalizeFirstLetter(provider);
@@ -47,6 +50,8 @@ export default function AccountingProviderConnect({ provider, companies, setErro
   }
 
 	async function handleSync(companyId: string, provider: string, companyName: string) {
+		if (loadingSync) return;
+		setLoadingSync(true);
     try {
 			const res = await fetch("/api/microservice/sync-company", {
 				method: "POST",
@@ -57,12 +62,16 @@ export default function AccountingProviderConnect({ provider, companies, setErro
 			if (!res.ok) {
 				throw new Error(`Failed to sync ${companyName}. Status: ${res.status}`);
 			}
+
+      router.refresh();
 		} catch (err) {
 			console.error(err);
 			setErrorDialog({
 				title: "Sync Request Failed",
 				message: `An error occurred while starting a sync for ${companyName}. Please try again later.`
 			});
+		} finally {
+			setLoadingSync(false);
 		}
 	}
 
@@ -104,25 +113,26 @@ export default function AccountingProviderConnect({ provider, companies, setErro
                     size="sm"
                     onClick={() => handleDisconnect(company.companyMembershipId, company.companyName)}
                     disabled={Boolean(loadingDisconnect)}
+                    className="hover:bg-destructive hover:text-destructive-foreground hover:border-destructive hover:text-white"
                   >
-                    <Link2Off className="mr-1 h-4 w-4" />
+                    <Link2Off className="mr-1 h-4 w-4"/>
                     {loadingDisconnect === company.companyMembershipId
                       ? <>
-                          <Spinner className="ml-1" />
+                          <Spinner className="ml-1"/>
                           <span className="sr-only">Disconnecting</span>
                         </>
                       : "Disconnect"
                     }
                   </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleSync(company.companyId, provider, company.companyName)}
+                  <SyncButton
+                    companyId={company.companyId}
+                    provider={provider}
+                    companyName={company.companyName}
+                    lastSyncRequestedAt={company.lastSyncRequestedAt}
                     disabled={Boolean(loadingDisconnect)}
-                  >
-                    <CloudSync className="mr-1 h-4 w-4"/>
-                    Sync
-                  </Button>
+                    isLoading={loadingSync}
+                    onSync={handleSync}
+                  />
                 </div>
               </li>
             ))}
@@ -132,7 +142,7 @@ export default function AccountingProviderConnect({ provider, companies, setErro
               href={`/api/${provider}/auth`}
               className="inline-flex items-center gap-1"
             >
-              <Link2 className="mr-1 h-4 w-4" />
+              <Link2 className="mr-1 h-4 w-4"/>
               {companies.length > 0 ? "Add more companies" : `Connect to ${providerCapitalized}`}
             </a>
           </Button>

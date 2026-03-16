@@ -117,3 +117,29 @@ export function getChartColor(index: number): string {
   const colorIndex = (index % 10) + 1;
   return `var(--chart-${colorIndex})`;
 }
+
+export function getSyncAvailability(lastSyncedAt: Date | null): {
+  canSync: boolean;
+  timeRemaining?: string;
+} {
+  if (!lastSyncedAt) {
+    return { canSync: true };
+  }
+
+  const now = new Date();
+  const lastSync = new Date(lastSyncedAt);
+  const thirtySecondsInMs = 30 * 1000;
+  const timeSinceLastSync = now.getTime() - lastSync.getTime();
+
+  if (timeSinceLastSync >= thirtySecondsInMs) {
+    return { canSync: true };
+  }
+
+  const timeRemainingMs = thirtySecondsInMs - timeSinceLastSync;
+  const totalMinutes = Math.floor(timeRemainingMs / (60 * 1000));
+  const seconds = Math.floor((timeRemainingMs % (60 * 1000)) / 1000);
+
+  const timeRemaining = `${totalMinutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+  return { canSync: false, timeRemaining };
+}
