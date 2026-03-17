@@ -11,8 +11,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Calhame - Accounting Dashboard",
-  description: "Accounting software built for Quickbooks integrations and data visualization."
+  title: "Calhame - CFO Dashboard",
+  description: "CFO dashboard built for Quickbooks integrations and data visualization."
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

@@ -29,7 +29,7 @@ export default function DashboardSideNav({ companies }: DashboardSideNavProps) {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sidebar-primary">
               <BookOpen className="h-4 w-4 text-sidebar-primary-foreground"/>
             </div>
-          <span className="text-lg font-semibold tracking-tight">Calhame</span>
+          <span className="text-lg font-semibold tracking-tight">Calhame CFO</span>
         </div>
       </SidebarHeader>
 

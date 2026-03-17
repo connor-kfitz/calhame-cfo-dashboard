@@ -1,5 +1,5 @@
 {
-  "name": "calhame-accounting",
+  "name": "calhame-cfo",
   "private": true,
   "scripts": {
     "build": "turbo run build",

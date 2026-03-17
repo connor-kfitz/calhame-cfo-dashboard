@@ -12,6 +12,11 @@ CREATE TABLE users (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+CREATE TABLE accounting_providers (
+    id TEXT PRIMARY KEY,
+    display_name TEXT NOT NULL
+);
+
 CREATE TABLE companies (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     provider_company_id TEXT NOT NULL,
@@ -35,11 +40,6 @@ CREATE TABLE company_memberships (
 );
 
 -- Provider Layer --
-
-CREATE TABLE accounting_providers (
-    id TEXT PRIMARY KEY,
-    display_name TEXT NOT NULL
-);
 
 CREATE TABLE accounting_connections (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

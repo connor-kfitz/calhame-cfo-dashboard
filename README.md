@@ -1,6 +1,6 @@
-# Calhame Accounting Dashboard
+# Calhame CFO Dashboard
 
-Monorepo for an accounting dashboard that connects to QuickBooks, stores data in Postgres, and runs background sync jobs via BullMQ + Redis.
+Monorepo for a CFO dashboard that connects to QuickBooks, stores data in Postgres, and runs background sync jobs via BullMQ + Redis.
 
 ## Repo layout
 
