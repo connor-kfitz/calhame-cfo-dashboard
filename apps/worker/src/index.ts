@@ -28,7 +28,11 @@ const worker = new Worker(
   },
   {
     connection: redisConnection,
-    concurrency: 5
+    drainDelay: 30,
+    concurrency: 2,
+    lockDuration: 60000,
+    stalledInterval: 60000,
+    maxStalledCount: 1
   }
 );
 
